@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'product_spider'
+    name = 'trendyol_product_spider'
 
     def __init__(self, *args, **kwargs):
         super(ProductSpider, self).__init__(*args, **kwargs)
@@ -31,21 +31,25 @@ class ProductSpider(scrapy.Spider):
         selector = scrapy.Selector(text=rendered_body)
 
         item['title'] = " ".join(selector.xpath('//h1[@class="pr-new-br"]/span/text()').getall())
-        item['price'] = selector.css('.product-price-container span.prc-org::text').get()
+        item['price'] = selector.css('.product-price-container span.prc-org::text').get() # it can be none
+        print(item['price'])
         item['price_without_discount'] = selector.css('.product-price-container span.prc-dsc::text').get()
 
         if item['price'] is None or item['price'] == '':
             item['price'] = item['price_without_discount']
 
-        item['main_image_url'] = selector.xpath('//swiper-container[@class="main-carousel"]/swiper-slide['
-                                                '@data-swiper-slide-index="0"]/img/@src').get()
-        item['other_image_urls'] = selector.xpath('//swiper-container[@class="main-carousel"]/swiper-slide['
-                                                  '@data-swiper-slide-index!="0"]/img/@src').getall()
+        item['main_image_url']   = selector.xpath('//div[@class="product-slide focused"]/img/@src').get()
+        item['other_image_urls'] = selector.xpath('//div[@class="product-slide"]/img/@src').getall()
 
-        item['rating_score'] = selector.css('.rnUHKhce::text').get()
-        item['review_count'] = selector.css('.Euo7zJKH span b::text').get()
+        item['rating_score'] = selector.css('.rating-line-count::text').get()
+        item['review_count'] = selector.css('.total-review-count::text').get()
     
         yield item
 
     def closed(self, reason):
         self.driver.quit()
+
+# Create a CrawlerProcess and pass the spider
+process = scrapy.crawler.CrawlerProcess()
+process.crawl(ProductSpider)
+process.start()
