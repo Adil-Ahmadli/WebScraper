@@ -22,6 +22,8 @@ SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agent
 SCRAPEOPS_FAKE_USER_AGENT_ENABLED = True
 SCRAPEOPS_NUM_RESULTS = 5
 
+SCRAPEOPS_PROXY_ENABLED = True
+
 ROTATIING_PROXY_LIST = [
     '72.210.221.223:4145',
     '192.252.214.20:15864',
@@ -32,11 +34,39 @@ ROTATIING_PROXY_LIST = [
     '72.206.181.123:4145',
     '98.170.57.249:4145',
     '68.71.254.6:4145',
-    '142.54.226.214:4145'
+    '142.54.226.214:4145',
+    '103.174.81.66:8080'
+    "179.53.207.195:8080",
+    "34.64.85.78:3128",
+    "148.251.192.186:80",
+    "14.207.97.109:8080",
+    "178.62.229.28:3128",
+    "74.96.118.126:80",
+    "12.7.109.1:9812",
+    "5.149.81.90:8080",
+    "161.132.125.244:8080",
+    "181.81.245.194:4128",
+    "103.48.69.113:82",
+    "66.225.254.16:80",
+    '115.127.83.142:1234',
+    '87.247.251.240:3128',
+    '181.13.141.234:80',
+    "158.180.16.252:80",
+    "82.113.157.122:31280",
+    "94.23.1.178:3128",
+    "179.189.48.253:8080",
+    "64.56.150.102:3128",
+    "81.12.40.250:8080",
+    "124.198.91.170:29268",
+    "154.0.154.113:8080",
+    "35.201.24.9:80",
+    "51.38.241.250:54321",
+    "83.126.54.155:8080",
+    "103.108.88.41:8080",
 ]
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0"
+#USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False

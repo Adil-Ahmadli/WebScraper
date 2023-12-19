@@ -36,16 +36,6 @@ class ProductSpider(scrapy.Spider):
     def parse(self, selector):
         item = ProductItem()
 
-        with open("output.html", "w", encoding="utf-8") as f:
-            f.write(selector.css("*").get())
-        f.close()
-
-        print("---------------")
-        x = selector.css('img[loading="lazy"]::attr(alt)').get()
-        value = selector.css(f'img[alt="{x}"]::attr(src)').get()
-        print(value)
-        print("---------------")
-
         item['title'] = " ".join(selector.xpath('//h1[@class="pr-new-br"]/span/text()').getall())
         item['price'] = selector.css('.product-price-container span.prc-org::text').get() # it can be none
         item['price_without_discount'] = selector.css('.product-price-container span.prc-dsc::text').get()
