@@ -32,18 +32,26 @@ class N11ProductSpider(scrapy.Spider):
                         url=url,
                         callback=self.parse,
                         endpoint="execute",
-                        args={ 'wait': 5, "timeout":120, 'lua_source': lua_script, "images":0, "resource_timeout":20},
+                        args={ 'wait': 5, "timeout":240, 'lua_source': lua_script, "images":0, "resource_timeout":40},
                         splash_headers={"Connection":"keep-alive"}
                     )
 
     def parse(self, selector):
         item = ProductItem()
+        with open("output.html", "w", encoding="utf-8") as f:
+            f.write(selector.css("*").get())
+        f.close()
 
         item['title'] = " ".join(selector.xpath('//h1[@class="proName"]/text()').getall())
         item['price'] = selector.css('.priceDetail .priceContainer .oldPrice::text').get() # it can be none
         
         print("---------------")
         print(item['price'])
+        print("---------------")
+        print("---------------")
+        x = selector.css('img[loading="lazy"]::attr(alt)').get()
+        value = selector.css(f'img[alt="{x}"]::attr(src)').get()
+        print(value)
         print("---------------")
 
         item['price_without_discount'] = selector.css('.priceDetail .priceContainer .newPrice ins::text').get()

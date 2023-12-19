@@ -6,6 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import pandas as pd
 
 
 class ProductscraperPipeline:
@@ -42,7 +43,17 @@ class ProductscraperPipeline:
         if value is None:
             adapter["review_count"] = 0
 
-
-
-
         return item
+
+
+class ExcelExportPipeline:
+    def open_spider(self, spider):
+        self.items = []
+
+    def process_item(self, item, spider):
+        self.items.append(item)
+        return item
+
+    def close_spider(self, spider):
+        data = pd.DataFrame(self.items)
+        data.to_excel('data.xlsx', index=False)

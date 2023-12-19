@@ -140,6 +140,7 @@ DEFAULT_REQUEST_HEADERS = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "productscraper.pipelines.ProductscraperPipeline": 300,
+    'productscraper.pipelines.ExcelExportPipeline': 301,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
