@@ -1,51 +1,54 @@
 import scrapy
 from productscraper.items import ProductItem
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from scrapy_splash import SplashRequest
+from urllib.parse import quote
 
+lua_script = """
+function main(splash, args)
+    splash:set_custom_headers({
+      ["x-custom-header"] = "splash"
+    })
+    assert(splash:go(args.url))
+    assert(splash:wait(5))
+    while not splash:select('.product-price-container span.prc-dsc') do
+        assert(splash:wait(5))
+        print(".")
+    end
+    return {html = splash:html()}
+end
+"""
+#lua_script = quote(lua_script)
 
 class ProductSpider(scrapy.Spider):
     name = 'product_spider'
-
-    def __init__(self, *args, **kwargs):
-        super(ProductSpider, self).__init__(*args, **kwargs)
-
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        self.driver = webdriver.Chrome(options=chrome_options)
 
     def start_requests(self):
         urls = getattr(self, 'urls', None)
         if urls is not None:
             urls = urls.split(',')
             for url in urls:
-                yield scrapy.Request(url=url, callback=self.parse)
+                yield SplashRequest(
+                    url=url, 
+                    callback=self.parse,
+                    endpoint="execute",
+                    args={ 'wait': 5, "timeout":120, 'lua_source': lua_script, "images":0, "resource_timeout":20},
+                    splash_headers={"Connection":"keep-alive"}
+                    )
 
-    def parse(self, response):
-        self.driver.get(response.url)
-        rendered_body = self.driver.page_source
-
+    def parse(self, selector):
         item = ProductItem()
-        selector = scrapy.Selector(text=rendered_body)
-
+        with open("output.html", "w", encoding="utf-8") as f:
+            f.write(selector.css("*").get())
+        f.close()
+        print("---------------")
+        print(selector.css('img[loading="lazy"]').getall())
+        print("---------------")
         item['title'] = " ".join(selector.xpath('//h1[@class="pr-new-br"]/span/text()').getall())
-        item['price'] = selector.css('.product-price-container span.prc-org::text').get()
+        item['price'] = selector.css('.product-price-container span.prc-org::text').get() # it can be none
         item['price_without_discount'] = selector.css('.product-price-container span.prc-dsc::text').get()
-
-        if item['price'] is None or item['price'] == '':
-            item['price'] = item['price_without_discount']
-
-        item['main_image_url'] = selector.xpath('//swiper-container[@class="main-carousel"]/swiper-slide['
-                                                '@data-swiper-slide-index="0"]/img/@src').get()
-        item['other_image_urls'] = selector.xpath('//swiper-container[@class="main-carousel"]/swiper-slide['
-                                                  '@data-swiper-slide-index!="0"]/img/@src').getall()
-
-        item['rating_score'] = selector.css('.rnUHKhce::text').get()
-        item['review_count'] = selector.css('.Euo7zJKH span b::text').get()
+        item['main_image_url']   = selector.xpath('//div[@class="product-slide focused"]/img').get() ## some has only one phote and different selec
+        item['other_image_urls'] = selector.xpath('//div[@class="product-slide"]/img').getall()
+        item['rating_score'] = selector.css('.rating-line-count').get()
+        item['review_count'] = selector.css('.total-review-count').get()
     
         yield item
-
-    def closed(self, reason):
-        self.driver.quit()
