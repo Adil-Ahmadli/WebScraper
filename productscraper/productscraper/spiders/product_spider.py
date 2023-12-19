@@ -1,7 +1,14 @@
 import scrapy
 from productscraper.items import ProductItem
 from scrapy_splash import SplashRequest
-from urllib.parse import quote
+from urllib.parse import urlencode
+ 
+API_KEY = '9963810e06443673febd6bfb0628d6b0'
+
+def get_proxy_url(url):
+    payload = {'api_key': API_KEY, 'url': url, 'apiParams':{ 'autoparse': True, 'retry_404': True }}
+    proxy_url = 'https://async.scraperapi.com/jobs' + urlencode(payload)
+    return proxy_url
 
 lua_script = """
 function main(splash, args)
