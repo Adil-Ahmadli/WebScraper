@@ -1,7 +1,6 @@
 import scrapy
 from productscraper.items import ProductItem
 from scrapy_splash import SplashRequest
-from urllib.parse import quote
 
 lua_script = """
 function main(splash, args)
@@ -17,8 +16,6 @@ function main(splash, args)
     return {html = splash:html()}
 end
 """
-#lua_script = quote(lua_script)
-
 
 class N11ProductSpider(scrapy.Spider):
     name = 'n11_product_spider'
