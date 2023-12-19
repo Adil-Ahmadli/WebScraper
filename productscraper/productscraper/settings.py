@@ -13,6 +13,10 @@ SPIDER_MODULES = ["productscraper.spiders"]
 NEWSPIDER_MODULE = "productscraper.spiders"
 CONCURRENT_REQUESTS = 5
 
+FEEDS = {
+    'data.json': {'format': 'json', 'overwrite': True},
+    'data.csv':  {'format': 'csv',  'overwrite': True},
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0"
