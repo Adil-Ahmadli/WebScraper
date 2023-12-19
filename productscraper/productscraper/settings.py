@@ -11,12 +11,29 @@ BOT_NAME = "productscraper"
 
 SPIDER_MODULES = ["productscraper.spiders"]
 NEWSPIDER_MODULE = "productscraper.spiders"
-CONCURRENT_REQUESTS = 5
+CONCURRENT_REQUESTS = 32
 
 FEEDS = {
     'data.json': {'format': 'json', 'overwrite': True},
     'data.csv':  {'format': 'csv',  'overwrite': True},
 }
+SCRAPEOPS_APT_KEY = '87d36a24-5a54-434c-a8c2-100dc07c9225'
+SCRAPEOPS_FAKE_USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/user-agents'
+SCRAPEOPS_FAKE_USER_AGENT_ENABLED = True
+SCRAPEOPS_NUM_RESULTS = 5
+
+ROTATIING_PROXY_LIST = [
+    '72.210.221.223:4145',
+    '192.252.214.20:15864',
+    '192.252.216.81:4145',
+    '142.54.237.34:4145',
+    '107.181.168.145:4145',
+    '74.119.147.209:4145',
+    '72.206.181.123:4145',
+    '98.170.57.249:4145',
+    '68.71.254.6:4145',
+    '142.54.226.214:4145'
+]
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0"
@@ -31,6 +48,8 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_splash.SplashCookiesMiddleware': 723,
     'scrapy_splash.SplashMiddleware': 725,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
 }
 
 SPIDER_MIDDLEWARES = {
