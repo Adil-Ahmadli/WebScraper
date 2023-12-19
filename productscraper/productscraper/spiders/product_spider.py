@@ -41,14 +41,19 @@ class ProductSpider(scrapy.Spider):
         f.close()
 
         print("---------------")
-        print(selector.css('img[loading="lazy"]').getall())
+        x = selector.css('img[loading="lazy"]::attr(alt)').get()
+        value = selector.css(f'img[alt="{x}"]::attr(src)').get()
+        print(value)
         print("---------------")
 
         item['title'] = " ".join(selector.xpath('//h1[@class="pr-new-br"]/span/text()').getall())
         item['price'] = selector.css('.product-price-container span.prc-org::text').get() # it can be none
         item['price_without_discount'] = selector.css('.product-price-container span.prc-dsc::text').get()
-        item['main_image_url']   = selector.xpath('//div[@class="product-slide focused"]/img').get() ## some has only one phote and different selec
-        item['other_image_urls'] = selector.xpath('//div[@class="product-slide"]/img').getall()
+
+        x = selector.css('img[loading="lazy"]::attr(alt)').get()
+        item['main_image_url'] = selector.css(f'img[alt="{x}"]::attr(src)').get()
+
+        item['other_image_urls'] = selector.css(f'img[loading="lazy"]:not([alt="{x}"])::attr(src)').getall()
         item['rating_score'] = selector.css('.rating-line-count').get()
         item['review_count'] = selector.css('.total-review-count').get()
     
